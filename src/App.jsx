@@ -21,6 +21,7 @@ const navItems = [
   { label: 'Home', href: '#home' },
   { label: 'Experience', href: '#experience' },
   { label: 'Projects', href: '#projects' },
+  { label: 'Approach', href: '#approach' },
   { label: 'Skills', href: '#skills' },
   { label: 'Resume', href: '#resume' },
   { label: 'Contact', href: '#contact' },
@@ -136,17 +137,6 @@ const projects = [
     imageAlt: 'DVWA cross-site request forgery security lab',
   },
   {
-    title: 'Cybersecurity Portfolio',
-    subtitle: 'Ethical hacking and digital forensics',
-    description:
-      'This project set includes structured exercises in system enumeration, network analysis, web application testing, wireless analysis, privilege escalation, and forensic investigation using recognized lab tools and workflows.',
-    actions: ['Nmap', 'Wireshark', 'Metasploit', 'Forensics', 'Privilege Escalation'],
-    link: 'https://github.com/ksindhu1s',
-    thumbnail: '/project-thumbnails/cybersecurity-project.jpeg',
-    image: '/labs/metasploit-lab.png',
-    imageAlt: 'Metasploit and virtual machine cybersecurity lab',
-  },
-  {
     title: 'Virtual Machine Privilege Escalation Project',
     subtitle: 'Linux privilege escalation and root access assessment',
     description:
@@ -167,17 +157,6 @@ const projects = [
     imageAlt: 'Metasploit framework project evidence',
   },
   {
-    title: 'Enterprise Risk Management Plan',
-    subtitle: 'Security governance and organizational risk',
-    description:
-      'Created an enterprise risk management plan covering critical assets, threat scenarios, control evaluation, prioritization, and practical mitigation planning for a business environment.',
-    actions: ['Risk Management', 'Threat Modeling', 'Security Controls', 'NIST', 'Governance'],
-    link: 'https://github.com/ksindhu1s/risk-management-plan.git',
-    thumbnail: '/project-thumbnails/risk-management.jpeg',
-    image: '/labs/ftk-forensics.png',
-    imageAlt: 'FTK Imager digital forensics evidence review',
-  },
-  {
     title: 'GNS3 Multi-Floor Network Topology',
     subtitle: 'Network design and infrastructure troubleshooting',
     description:
@@ -188,6 +167,57 @@ const projects = [
     thumbnailAlt: 'Wireless networking router device',
   },
 ];
+
+const caseStudies = {
+  'Cybersecurity Risk Assessment': {
+    objective: 'Identify and prioritize cybersecurity risks for a transportation environment.',
+    environment: 'SimpleRisk with documented assets, threats, controls, and risk records.',
+    approach: 'Mapped risks to affected assets, evaluated control coverage, prioritized exposure, and documented practical mitigation actions.',
+    findings: 'The assessment produced a structured risk register that connected technical concerns to ownership, priority, and remediation planning.',
+    impact: 'Gives stakeholders a clearer basis for deciding which security improvements should be addressed first.',
+    remediation: 'Prioritize controls, assign accountable owners, track treatment decisions, and verify remediation progress.',
+  },
+  'Risk Management Plan': {
+    objective: 'Build a repeatable risk-management approach for evaluating assets, threats, controls, and business priorities.',
+    environment: 'A documented enterprise risk-planning scenario aligned to governance and security-control concepts.',
+    approach: 'Defined critical assets, considered threat scenarios, reviewed controls, and connected risk prioritization to practical treatment decisions.',
+    findings: 'The plan organizes security work around business impact instead of treating every technical issue as equally urgent.',
+    impact: 'Helps teams communicate security priorities clearly and make defensible decisions about remediation effort.',
+    remediation: 'Review the plan periodically, update risk assumptions, and measure control improvement over time.',
+  },
+  'Vulnerability Assessment': {
+    objective: 'Assess a vulnerable web application and document exploitable conditions in a controlled environment.',
+    environment: 'DVWA and supporting security tools in an isolated lab environment.',
+    approach: 'Combined enumeration, manual validation, and web-security testing to reproduce issues and record evidence.',
+    findings: 'The project documents web-application weaknesses including request-forgery and input-validation scenarios.',
+    impact: 'Demonstrates how an exposed web weakness can affect application integrity and user trust if left unaddressed.',
+    remediation: 'Apply server-side validation, anti-CSRF protections, secure configuration, least privilege, and regression testing.',
+  },
+  'Virtual Machine Privilege Escalation Project': {
+    objective: 'Investigate how an attacker could move from initial access to root in a controlled virtual machine.',
+    environment: 'Kali Linux and a vulnerable target VM using FTP, SSH, password-cracking, and sudo enumeration tools.',
+    approach: 'Enumerated services, reviewed exposed files, extracted hashes, validated credentials, established SSH access, and assessed sudo permissions.',
+    findings: 'The documented attack chain shows how weak service configuration and excessive privileges can compound into full system compromise.',
+    impact: 'Connects individual misconfigurations to the operational risk of unauthorized administrative control.',
+    remediation: 'Disable unnecessary services, remove anonymous access, enforce strong credentials, restrict sudo rules, and monitor privileged activity.',
+  },
+  'Samba Exploitation & Metasploit Framework Project': {
+    objective: 'Assess a vulnerable Samba service and document the exploitation path in an isolated environment.',
+    environment: 'A controlled target using Nmap for discovery and Metasploit for validation of the Samba vulnerability.',
+    approach: 'Enumerated exposed services, identified the relevant Samba weakness, validated exploitation, and recorded remediation considerations.',
+    findings: 'The assessment demonstrates how an outdated or vulnerable network service can provide an attacker a path to unauthorized access.',
+    impact: 'Shows why service inventory, patching, segmentation, and exposure reduction matter to security operations.',
+    remediation: 'Patch or remove vulnerable Samba versions, restrict network exposure, harden configuration, and monitor exploitation attempts.',
+  },
+  'GNS3 Multi-Floor Network Topology': {
+    objective: 'Design and document a multi-floor network that can be reasoned about, tested, and troubleshot.',
+    environment: 'GNS3, Cisco IOS concepts, VLANs, routing, DHCP, DNS, TCP/IP, and packet analysis.',
+    approach: 'Built a segmented topology, applied addressing and network services, and used packet-level reasoning to validate traffic behavior.',
+    findings: 'The topology makes routing, switching, segmentation, and service dependencies visible for troubleshooting and security review.',
+    impact: 'Demonstrates infrastructure fluency that supports stronger network-security and incident-analysis decisions.',
+    remediation: 'Maintain segmentation, document dependencies, restrict management access, and continuously validate network controls.',
+  },
+};
 
 const skillGroups = [
   {
@@ -249,7 +279,7 @@ const credentialImages = {
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.2 },
+  viewport: { once: true, amount: 0.05 },
   transition: { duration: 0.6, ease: 'easeOut' },
 };
 
@@ -266,11 +296,21 @@ function BrandMark() {
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLaunching, setIsLaunching] = useState(true);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
     const launchTimer = window.setTimeout(() => setIsLaunching(false), 700);
 
     return () => window.clearTimeout(launchTimer);
+  }, []);
+
+  useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setSelectedProject(null);
+    };
+
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
   }, []);
 
   return (
@@ -356,24 +396,24 @@ function App() {
         <section className="container-shell grid items-center gap-12 py-16 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
           <motion.div {...fadeUp} className="max-w-2xl">
             <p className="mb-4 inline-flex items-center rounded-full border border-lime-300/30 bg-lime-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-lime-300">
-              Cybersecurity and IT Support Specialist
+              Cybersecurity & IT Professional
             </p>
             <h1 className="text-4xl font-black tracking-tight text-white md:text-5xl lg:text-6xl">
-              Cybersecurity and IT Support Specialist
+              Cybersecurity & IT Professional
             </h1>
             <h2 className="mt-4 text-xl font-medium text-slate-300 md:text-2xl">
-              Supporting users. Managing systems. Improving security.
+              Systems-minded. Security-focused. Evidence-driven.
             </h2>
             <p className="mt-6 max-w-xl text-base leading-7 text-slate-300 md:text-lg">
-              Cybersecurity and IT Support Specialist with hands-on experience in enterprise IT infrastructure, network administration, cloud-based SaaS platforms, and security-focused system management. Skilled in Windows administration, Active Directory, TCP/IP networking, VLANs, DHCP, DNS, Wireshark, IAM, RBAC, API integrations, automation workflows, and technical support.
+              I troubleshoot systems, investigate technical problems, and assess security risk across endpoints, networks, infrastructure, and controlled cybersecurity environments. My path connects IT support, systems administration, networking, GRC, and security operations.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a href="#experience" className="inline-flex items-center justify-center gap-2 rounded-full bg-lime-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-lime-300">
-                View My Experience <ArrowRight size={16} />
+              <a href="#projects" className="inline-flex items-center justify-center gap-2 rounded-full bg-lime-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-lime-300">
+                View Projects <ArrowRight size={16} />
               </a>
-              <a href="#projects" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/60 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-800/80">
-                View Projects
+              <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/60 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-800/80">
+                Let&apos;s Connect
               </a>
               <a href="/Karnelius_Sindhu_Resume.pdf" download className="inline-flex items-center justify-center gap-2 rounded-full border border-lime-300/40 bg-lime-400/10 px-5 py-3 text-sm font-semibold text-lime-200 transition hover:border-lime-200 hover:bg-lime-400/20">
                 <Download size={16} /> Download Resume
@@ -488,6 +528,55 @@ function App() {
           </div>
         </motion.section>
 
+        <motion.section {...fadeUp} id="approach" className="container-shell py-20">
+          <div className="mb-10 max-w-2xl">
+            <p className="section-kicker">How I Approach Security</p>
+            <h3 className="section-title">Understand the system. Prove the finding. Make the next step clear.</h3>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {[
+              ['01', 'Understand', 'Learn the environment, users, assets, and business requirement before making assumptions.'],
+              ['02', 'Investigate', 'Gather evidence through logs, tickets, packet data, configuration review, and controlled testing.'],
+              ['03', 'Validate', 'Reproduce the behavior safely so the finding is explainable, repeatable, and properly scoped.'],
+              ['04', 'Assess Risk', 'Connect technical severity to exposure, business impact, control gaps, and operational priority.'],
+              ['05', 'Remediate', 'Recommend practical improvements that teams can implement, verify, and maintain.'],
+              ['06', 'Document', 'Communicate the evidence, decision, and next action clearly for technical and non-technical audiences.'],
+            ].map(([number, title, text]) => (
+              <div key={number} className="glass-panel p-6">
+                <span className="text-sm font-semibold tracking-[0.2em] text-lime-300">{number}</span>
+                <h4 className="mt-4 text-xl font-semibold text-white">{title}</h4>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{text}</p>
+              </div>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section {...fadeUp} id="about" className="container-shell grid gap-8 py-20 lg:grid-cols-[0.8fr_1.2fr]">
+          <div>
+            <p className="section-kicker">Why Cybersecurity</p>
+            <h3 className="section-title">Curiosity became a method.</h3>
+          </div>
+          <div className="glass-panel p-8">
+            <p className="text-lg leading-8 text-slate-200">I have always been drawn to understanding why technology behaves the way it does: why a user cannot connect, how a system is configured, where a weakness begins, and what evidence can prove it.</p>
+            <p className="mt-5 leading-7 text-slate-300">That curiosity led from IT support into systems, networking, automation, and cybersecurity. Today I bring an operations mindset to security work: troubleshoot carefully, investigate methodically, understand risk, and leave behind documentation that helps a team act.</p>
+          </div>
+        </motion.section>
+
+        <motion.section {...fadeUp} id="focus" className="border-y border-slate-800/80 bg-slate-900/30">
+          <div className="container-shell flex flex-col gap-6 py-10 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="section-kicker">Currently Focused On</p>
+              <h3 className="text-2xl font-bold text-white">Building toward security operations and engineering.</h3>
+            </div>
+            <div className="flex max-w-xl flex-wrap gap-2">
+              {['Security Operations', 'Vulnerability Assessment', 'Network Security', 'GRC', 'IAM', 'Security Engineering'].map((focus) => (
+                <span key={focus} className="rounded-full border border-lime-300/20 bg-lime-400/5 px-3 py-1.5 text-sm text-lime-200">{focus}</span>
+              ))}
+            </div>
+          </div>
+        </motion.section>
+
         <motion.section {...fadeUp} id="experience" className="container-shell py-20">
           <div className="mb-10 max-w-2xl">
             <p className="section-kicker">Experience</p>
@@ -506,7 +595,7 @@ function App() {
                 </div>
 
                 <ul className="space-y-3">
-                  {exp.bullets.map((bullet) => (
+                  {exp.bullets.slice(0, 6).map((bullet) => (
                     <li key={bullet} className="flex gap-3 text-slate-300">
                       <CircleCheckBig size={18} className="mt-0.5 shrink-0 text-lime-300" />
                       <span>{bullet}</span>
@@ -556,9 +645,14 @@ function App() {
                   ))}
                 </div>
 
-                <a href={project.link} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-lime-300 transition hover:text-lime-200">
-                  View GitHub <ChevronRight size={16} />
-                </a>
+                <div className="mt-6 flex flex-wrap items-center gap-4">
+                  <button type="button" onClick={() => setSelectedProject(project)} className="inline-flex items-center gap-2 text-sm font-semibold text-lime-300 transition hover:text-lime-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-300">
+                    View Case Study <ChevronRight size={16} />
+                  </button>
+                  <a href={project.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-300 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-300">
+                    View GitHub <ChevronRight size={16} />
+                  </a>
+                </div>
               </article>
             ))}
           </div>
@@ -603,8 +697,8 @@ function App() {
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                     <span>{credential}</span>
                     <span className="flex gap-3 text-xs font-semibold uppercase tracking-[0.14em]">
-                      <a href={credentialLinks[credential].badge} target="_blank" rel="noreferrer" className="text-lime-300 transition hover:text-lime-200">{credentialLinks[credential].badgeLabel || 'View badge'}</a>
-                      <a href={credentialLinks[credential].verification} target="_blank" rel="noreferrer" className="text-slate-400 transition hover:text-lime-300">{credentialLinks[credential].verificationLabel || 'Verify'}</a>
+                      <a href={credentialLinks[credential].badge} target="_blank" rel="noopener noreferrer" className="text-lime-300 transition hover:text-lime-200">{credentialLinks[credential].badgeLabel || 'View badge'}</a>
+                      <a href={credentialLinks[credential].verification} target="_blank" rel="noopener noreferrer" className="text-slate-400 transition hover:text-lime-300">{credentialLinks[credential].verificationLabel || 'Verify'}</a>
                     </span>
                   </div>
                 ) : (
@@ -617,7 +711,7 @@ function App() {
           <a
             href="https://cdn.certifier.io/cfa0371f-bc25-4ad1-b10d-e1771740ed73/credentials/01jrp587jweaskdm418m5k0n78/designs/01jrp4n65at2110xym8f631x5z/oEGMsdG4aA.png"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="mt-6 flex flex-col gap-5 rounded-2xl border border-lime-300/20 bg-slate-900/60 p-5 transition hover:border-lime-300/50 sm:flex-row sm:items-center"
           >
             <img
@@ -664,17 +758,64 @@ function App() {
               <Mail className="shrink-0 text-lime-300" />
               <span className="min-w-0 break-all text-slate-200">karneliussindhu6329@gmail.com</span>
             </a>
-            <a href="https://www.linkedin.com/in/karnelius-sindhu-8196b11bb" target="_blank" rel="noreferrer" className="glass-panel flex items-center gap-4 p-5 transition hover:border-lime-300/40">
+            <a href="https://www.linkedin.com/in/karnelius-sindhu-8196b11bb" target="_blank" rel="noopener noreferrer" className="glass-panel flex items-center gap-4 p-5 transition hover:border-lime-300/40">
               <Globe className="shrink-0 text-lime-300" />
               <span className="text-slate-200">LinkedIn</span>
             </a>
-            <a href="https://github.com/ksindhu1s" target="_blank" rel="noreferrer" className="glass-panel flex items-center gap-4 p-5 transition hover:border-lime-300/40">
+            <a href="https://github.com/ksindhu1s" target="_blank" rel="noopener noreferrer" className="glass-panel flex items-center gap-4 p-5 transition hover:border-lime-300/40">
               <Github className="shrink-0 text-lime-300" />
               <span className="text-slate-200">GitHub</span>
             </a>
           </div>
         </motion.section>
       </main>
+
+      <AnimatePresence>
+        {selectedProject && caseStudies[selectedProject.title] && (
+          <motion.div
+            className="fixed inset-0 z-[90] flex items-end justify-center bg-slate-950/80 p-3 backdrop-blur-sm sm:items-center sm:p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedProject(null)}
+          >
+            <motion.article
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="case-study-title"
+              className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-lime-300/20 bg-slate-900 p-6 shadow-2xl sm:p-8"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 24 }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-start justify-between gap-5">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-lime-300">Case Study</p>
+                  <h2 id="case-study-title" className="mt-2 text-2xl font-bold text-white sm:text-3xl">{selectedProject.title}</h2>
+                </div>
+                <button type="button" onClick={() => setSelectedProject(null)} className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-700 text-slate-300 transition hover:border-lime-300 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-300" aria-label="Close case study">
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="mt-8 grid gap-6 sm:grid-cols-2">
+                {Object.entries(caseStudies[selectedProject.title]).map(([label, text]) => (
+                  <div key={label} className="border-l border-lime-300/30 pl-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-lime-300">{label.replace('_', ' ')}</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-300">{text}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 flex flex-wrap gap-4 border-t border-slate-800 pt-6">
+                <a href={selectedProject.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-lime-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-lime-300">View on GitHub <ChevronRight size={16} /></a>
+                <button type="button" onClick={() => setSelectedProject(null)} className="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-300">Close</button>
+              </div>
+            </motion.article>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <footer className="border-t border-slate-800/80 py-8">
         <div className="container-shell flex flex-col gap-3 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">

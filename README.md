@@ -1,8 +1,30 @@
 # Cybersecurity Portfolio — Karnelius Sindhu
 
-Security-focused technical portfolio covering ethical hacking, network analysis, digital forensics, and practical IT operations support. This repository showcases recent labs and project work completed in controlled lab environments using industry-standard tools.
+Public React portfolio for Karnelius Sindhu, a cybersecurity and IT professional focused on security operations, vulnerability assessment, networking, systems administration, GRC, and practical security engineering.
 
-[GitHub Profile](https://github.com/ksindhus1s)
+The site connects real IT support experience with evidence-backed cybersecurity projects. Recruiters can review experience, open structured case studies, verify credentials, and download the current resume.
+
+[GitHub Profile](https://github.com/ksindhu1s)
+
+## Tech Stack
+
+- React 18 and Vite
+- Tailwind CSS
+- Framer Motion
+- Lucide React
+
+## Features
+
+- Responsive recruiter-focused portfolio layout
+- Curated security project cards with case-study modals
+- Local lab evidence and deployment-safe project thumbnails
+- Resume download and verified credential links
+- GitHub project integration
+- Accessible focus states, mobile navigation, and reduced-motion support
+
+## Cybersecurity Focus
+
+IT support and infrastructure, vulnerability assessment, ethical hacking, digital forensics, IAM/RBAC, GRC, risk assessment, security controls, NIST CSF/RMF, MITRE ATT&CK, network security, and security operations.
 
 ---
 
@@ -75,6 +97,19 @@ This work reflects a practical, evidence-driven approach to security work:
 - validate impact in controlled lab conditions
 - document findings in a clear and actionable way
 - connect technical findings to real business risk and remediation priorities
+
+## Local Development
+
+```bash
+npm install
+npm run dev
+npm run build
+npm run preview
+```
+
+## Deployment
+
+The production site is a Vite static build. Deploy the generated `dist/` directory through the current hosting provider or another static hosting platform. No environment secrets are required by the frontend.
 
 ---
 

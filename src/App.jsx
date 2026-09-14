@@ -503,7 +503,7 @@ function App() {
         <section className="border-y border-slate-800/80 bg-slate-900/40">
           <div className="container-shell py-6 text-sm text-slate-300">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <span className="min-w-0 break-words font-medium text-xs uppercase leading-5 tracking-[0.16em] text-slate-400 sm:text-sm sm:tracking-[0.25em]">IT SUPPORT · SYSTEMS · SECURITY · OPEN TO RELOCATION</span>
+              <span className="min-w-0 break-words font-medium text-xs uppercase leading-5 tracking-[0.16em] text-slate-400 sm:text-sm sm:tracking-[0.25em]">IT SUPPORT · SYSTEMS · SECURITY</span>
               <span className="inline-flex items-center gap-2 text-slate-300"><Target size={14} /> Remote + On-site</span>
             </div>
           </div>
